@@ -1,0 +1,92 @@
+<div class="container-fluid py-3">
+  <h1>Facebook Engagement Rate Calculator</h1>
+
+  <div class="row my-5">
+    <div class="col text-end">
+      Status:
+    </div>
+    <div class="col">
+      <span class="badge bg-success" *ngIf="isOnline">Online</span>
+      <span class="badge bg-danger" *ngIf="!isOnline">Offline</span>
+    </div>
+  </div>
+</div>
+
+<div class="w-100 position-absolute top-0" *ngIf="modalVersion">
+  <div class="alert alert-secondary m-2">
+    <button type="button" class="btn-close position-absolute top-0 end-0 m-1" aria-label="Close" (click)="closeVersion()"></button>
+    A new version of this app is available. <a href="" (click)="updateVersion()">Update now</a>
+  </div>
+</div>
+
+<div class="w-100 position-absolute bottom-0" *ngIf="modalPwaPlatform === 'ANDROID' || modalPwaPlatform === 'IOS'">
+  <div class="alert alert-secondary m-2">
+    <button type="button" class="btn-close position-absolute top-0 end-0 m-1" aria-label="Close" (click)="closePwa()"></button>
+    <!-- Android -->
+    <div *ngIf="modalPwaPlatform === 'ANDROID'" (click)="addToHomeScreen()">
+      Add this WEB app to home screen
+    </div>
+    <!-- iOS with Safari -->
+    <div *ngIf="modalPwaPlatform === 'IOS'">
+      To install this WEB app on your device, tap the "Menu" button
+      <img src="https://res.cloudinary.com/rodrigokamada/image/upload/v1641089482/Blog/angular-pwa/safari_action_button_38x50.png" class="ios-menu m-0" />
+      and then "Add to home screen" button
+      <i class="bi bi-plus-square"></i>
+    </div>
+  </div>
+</div>
+
+<form class="needs-validation was-validated" novalidate>
+  <div class="container">
+    <div class="row">
+      <div class="col d-flex align-self-center justify-content-center">{{"Facebook Engagement Rate ("+(getEngagementRate() | toFixed:this.numberOfDecimal)+")"}}</div>
+      <div class="col d-flex align-self-center justify-content-center">=</div>
+      <div class="col">
+        <div class="row border-bottom border-dark pb-3">{{"total engage user" | titlecase}}
+          <input class="form-control" [(ngModel)]="totalEngageUser" [placeholder]="'total engage user'" [ngModelOptions]="{standalone: true}" required/>
+          <div class="invalid-feedback" *ngIf="errTotalEngageUser && errTotalEngageUser!=''">
+            {{errTotalEngageUser}}
+          </div>
+        </div>
+        <div class="row pt-3">{{"total reach" | titlecase}}
+          <input class="form-control" [(ngModel)]="totalReach" placeholder="total reach" [ngModelOptions]="{standalone: true}" required>
+          <div class="invalid-feedback" *ngIf="errTotalReach && errTotalReach!=''">
+            {{errTotalReach}}
+          </div>
+        </div>
+      </div>
+      <div class="col d-flex align-self-center justify-content-center">x 100</div>
+    </div>
+
+    <div class="row">Notes:</div>
+    <div class="row">
+      <textarea [(ngModel)]="note" [ngModelOptions]="{standalone: true}"></textarea>
+    </div>
+    <button class="btn btn-primary" (click)="save()">Save</button>
+    <button class="btn btn-danger" (click)="clear()">Clear</button>
+
+    <div class="row">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">{{"total engage user" | titlecase}}</th>
+            <th scope="col">{{"total reach" | titlecase}}</th>
+            <th scope="col">{{"engagement rate" | titlecase}}</th>
+            <th scope="col">Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of history; let i = index;">
+            <th scope="row">{{i+1}}</th>
+            <td>{{data.totalEngageUser | number}}</td>
+            <td>{{data.totalReach | number}}</td>
+            <td>{{data.engagementRate | toFixed:this.numberOfDecimal}}</td>
+            <td>{{data.note}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</form>
+
